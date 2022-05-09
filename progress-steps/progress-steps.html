@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>progress-steps</title>
+    <style>
+        :root {
+            --line-border-fill: #3498db;
+            --line-border-empty: #e0e0e0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--line-border-fill);
+            border: 0;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 30px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .progress-container {
+            width: 350px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            height: 4px;
+            width: 0%;
+            background: var(--line-border-fill);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            z-index: -1;
+            transform: translateY(-50%);
+            transition: 0.4s ease;
+        }
+
+        .progress-container::before {
+            content: '';
+            height: 4px;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            background: var(--line-border-empty);
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+
+        .circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid var(--line-border-empty);
+            line-height: 30px;
+            text-align: center;
+            background: #fff;
+        }
+
+        .circle.active {
+            border: 3px solid var(--line-border-fill);
+        }
+
+        /* .btn:focus {
+            outline: 0;
+        } */
+
+        .btn:active {
+            transform: scale(0.9);
+        }
+
+        .btn:disabled {
+            background: var(--line-border-empty);
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+            <div class="circle active">1</div>
+            <div class="circle">2</div>
+            <div class="circle">3</div>
+            <div class="circle">4</div>
+        </div>
+        <button class="btn" id="prev" disabled>prev</button>
+        <button class="btn" id="next">next</button>
+    </div>
+    <script>
+        const progress = document.getElementById('progress')
+        const prev = document.getElementById('prev')
+        const next = document.getElementById('next')
+        const circle = document.querySelectorAll('.circle')
+        let index = 1
+        next.addEventListener('click', () => {
+            index++
+            if (index > circle.length) {
+                index = circle.length
+            }
+            update()
+        })
+        prev.addEventListener("click", () => {
+            index--
+            if (index < 1) {
+                index = 1
+            }
+            update()
+        })
+
+        function update() {
+            circle.forEach((v, i) => {
+                if (i < index) {
+                    v.classList.add('active')
+                } else {
+                    v.classList.remove('active')
+                }
+            })
+            const actives = document.querySelectorAll('.active')
+            progress.style.width = (actives.length - 1) / (circle.length - 1) * 100 + '%'
+            if (index === circle.length) {
+                next.disabled = true;
+                prev.disabled = false;
+            } else if (index > 1 && index < circle.length) {
+                next.disabled = false;
+                prev.disabled = false;
+            } else {
+                next.disabled = false;
+                prev.disabled = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
